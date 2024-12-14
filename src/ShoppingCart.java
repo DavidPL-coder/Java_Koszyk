@@ -5,12 +5,14 @@ public class ShoppingCart implements ShoppingCartService {
     private Product[] products;
     private int productsCount;
     private Promotion[] promotions;
+    private int promotionsCount;
     private Comparator<Product> productComparator;
 
     public ShoppingCart(Comparator<Product> productComparator) {
         this.products = new Product[5];
         this.productsCount = 0;
         this.promotions = new Promotion[0];
+        this.promotionsCount = 0;
         this.productComparator = productComparator;
     }
 
@@ -28,8 +30,6 @@ public class ShoppingCart implements ShoppingCartService {
         productsCount++;
 
         applyPromotions();
-
-        Arrays.sort(products, 0, productsCount, productComparator);
     }
 
     @Override
@@ -37,9 +37,11 @@ public class ShoppingCart implements ShoppingCartService {
         if (promotion == null)
             throw new IllegalArgumentException("Promotion cannot be null");
 
-        promotions = Arrays.copyOf(promotions, promotions.length + 1);
-        promotions[promotions.length - 1] = promotion;
+        promotions = Arrays.copyOf(promotions, promotionsCount + 1);
+        promotions[promotionsCount] = promotion;
+        promotionsCount++;
         promotion.applyPromotion(this);
+        Arrays.sort(products, 0, productsCount, productComparator);
     }
 
     @Override
@@ -48,7 +50,7 @@ public class ShoppingCart implements ShoppingCartService {
             throw new IllegalArgumentException("Promotion cannot be null");
 
         int promotionIndex = -1;
-        for (int i = 0; i < promotions.length; i++) {
+        for (int i = 0; i < promotionsCount; i++) {
             if (promotions[i].equals(promotion)) {
                 promotionIndex = i;
                 break;
@@ -58,10 +60,10 @@ public class ShoppingCart implements ShoppingCartService {
         if (promotionIndex == -1)
             throw new IllegalArgumentException("Promotion not found");
 
-        Promotion[] newPromotions = new Promotion[promotions.length - 1];
+        Promotion[] newPromotions = new Promotion[promotionsCount - 1];
         int index = 0;
 
-        for (int i = 0; i < promotions.length; i++) {
+        for (int i = 0; i < promotionsCount; i++) {
             if (promotionIndex != i) {
                 newPromotions[index] = promotions[i];
                 index++;
@@ -69,16 +71,24 @@ public class ShoppingCart implements ShoppingCartService {
         }
 
         promotions = newPromotions;
+        promotionsCount--;
         applyPromotions();
     }
 
     @Override
     public void applyPromotions() {
-        for (Product product : products)
-            product.setDiscountPrice(product.getPrice());
+        for (int i = 0; i < productsCount; i++)
+            products[i].setDiscountPrice(products[i].getPrice());
 
-        for (Promotion promotion : promotions)
-            promotion.applyPromotion(this);
+        for (int i = 0; i < promotionsCount; i++)
+            promotions[i].applyPromotion(this);
+
+        Arrays.sort(products, 0, productsCount, productComparator);
+    }
+
+    @Override
+    public Promotion[] getPromotions() {
+        return Arrays.copyOf(promotions, promotionsCount);
     }
 
     @Override
@@ -91,7 +101,7 @@ public class ShoppingCart implements ShoppingCartService {
 
     @Override
     public Product[] getProducts() {
-        return products;
+        return Arrays.copyOf(products, productsCount);
     }
 
     @Override
@@ -163,13 +173,14 @@ public class ShoppingCart implements ShoppingCartService {
         if (product.getCode() == null || product.getCode().trim().isEmpty())
             throw new IllegalArgumentException("Product code cannot be empty");
 
-        if (Arrays.stream(products).anyMatch(p -> p.getCode().equals(product.getCode())))
-            throw new IllegalArgumentException("Product code cannot be duplicated");
-
         if (product.getName() == null || product.getName().trim().isEmpty())
             throw new IllegalArgumentException("Product name cannot be empty");
 
         if (product.getDiscountPrice() < 0)
             throw new IllegalArgumentException("Product discount price cannot be negative");
+
+        for (int i = 0; i < productsCount; i++)
+            if (products[i].getCode().equals(product.getCode()))
+                throw new IllegalArgumentException("Product code cannot be duplicated");
     }
 }

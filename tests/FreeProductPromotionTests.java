@@ -10,20 +10,6 @@ class FreeProductPromotionTests {
         assertThrows(IllegalStateException.class, () -> promotion.applyPromotion(null), "Shopping cart cannot be null");
     }
 
-//    @Test
-//    void applyPromotion_ShouldNotApplyPromotion_WhenShoppingCartIsEmpty() {
-//        FreeProductPromotion promotion = new FreeProductPromotion(3);
-//        ShoppingCartService shoppingCart = mock(ShoppingCartService.class);
-//
-//        when(shoppingCart.getProducts()).thenReturn(new Product[0]);
-//
-//        // Testowanie przypadku, kiedy koszyk jest pusty
-//        promotion.applyPromotion(shoppingCart);
-//
-//        // Sprawdzamy, czy metoda getCheapestProduct nie została wywołana
-//        verify(shoppingCart, never()).getCheapestProduct();
-//    }
-
     @Test
     void applyPromotion_ShouldNotApplyPromotion_WhenProductCountIsBelowThreshold() {
         FreeProductPromotion promotion = new FreeProductPromotion(3);

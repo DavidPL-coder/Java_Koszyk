@@ -5,6 +5,7 @@ public interface ShoppingCartService {
     void addPromotion(Promotion promotion);
     void removePromotion(Promotion promotion);
     void applyPromotions();
+    Promotion[] getPromotions();
     void setSortingCriteria(Comparator<Product> productComparator);
     Product[] getProducts();
     double getTotalPrice();
