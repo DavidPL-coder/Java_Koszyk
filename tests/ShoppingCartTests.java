@@ -260,7 +260,8 @@ class ShoppingCartTests {
 
         shoppingCart.sortByPrice();
 
-        assertEquals("Product 2", shoppingCart.getProducts()[0].getName());
+        assertEquals("P002", shoppingCart.getProducts()[0].getCode());
+        assertEquals("P001", shoppingCart.getProducts()[1].getCode());
     }
 
     @Test
@@ -268,14 +269,15 @@ class ShoppingCartTests {
         Comparator<Product> productComparator = mock(Comparator.class);
         ShoppingCart shoppingCart = new ShoppingCart(productComparator);
 
-        Product product1 = new Product("P001", "Apple", 100.0);
-        Product product2 = new Product("P002", "Banana", 200.0);
+        Product product1 = new Product("P001", "Banana", 100.0);
+        Product product2 = new Product("P002", "Apple", 200.0);
         shoppingCart.addProduct(product1);
         shoppingCart.addProduct(product2);
 
         shoppingCart.sortByName();
 
         assertEquals("Apple", shoppingCart.getProducts()[0].getName());
+        assertEquals("Banana", shoppingCart.getProducts()[1].getName());
     }
 
     @Test
