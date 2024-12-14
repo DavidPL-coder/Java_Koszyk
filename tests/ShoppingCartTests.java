@@ -16,6 +16,9 @@ class ShoppingCartTests {
         Product[] products = shoppingCart.getProducts();
         assertEquals(1, products.length);
         assertEquals("Product 1", products[0].getName());
+        assertEquals("P001", products[0].getCode());
+        assertEquals(100, products[0].getPrice());
+        assertEquals(100, products[0].getDiscountPrice());
     }
 
     @Test
@@ -136,11 +139,31 @@ class ShoppingCartTests {
         Product product = new Product("P001", "Product 1", 100.0);
         shoppingCart.addProduct(product);
 
-        Promotion promotion = mock(DiscountPromotion.class);
+        Promotion promotion = mock(Promotion.class);
         shoppingCart.addPromotion(promotion);
 
         assertEquals(1, shoppingCart.getPromotions().length);
         verify(promotion, times(1)).applyPromotion(shoppingCart);
+    }
+
+    @Test
+    void removePromotion_ShouldRemovePromotion_WhenPromotionExists() {
+        Comparator<Product> productComparator = mock(Comparator.class);
+        ShoppingCart shoppingCart = new ShoppingCart(productComparator);
+        Product product = new Product("P001", "Product 1", 100.0);
+        shoppingCart.addProduct(product);
+        Promotion promotion = mock(Promotion.class);
+
+        doAnswer(invocation -> {
+            product.setDiscountPrice(product.getPrice() * 0.9);
+            return null;
+        }).when(promotion).applyPromotion(shoppingCart);
+        shoppingCart.addPromotion(promotion);
+        assertEquals(90.0, product.getDiscountPrice());
+
+        shoppingCart.removePromotion(promotion);
+
+        assertEquals(100.0, product.getDiscountPrice());
     }
 
     @Test

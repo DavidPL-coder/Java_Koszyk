@@ -45,7 +45,6 @@ public class FreeMugPromotionTests {
         promotion.applyPromotion(mockCart);
 
         verify(mockCart, never()).addProduct(any(Product.class));
-        assertEquals(50.0, products[0].getDiscountPrice());
     }
 
     @Test

@@ -30,9 +30,9 @@ class DiscountPromotionTests {
 
     @Test
     void applyPromotion_ShouldApplyDiscount_WhenTotalPriceIsAboveThreshold() {
-        DiscountPromotion promotion = new DiscountPromotion(100, 0.1);
+        DiscountPromotion promotion = new DiscountPromotion(50, 0.1);
         ShoppingCartService shoppingCart = mock(ShoppingCartService.class);
-        when(shoppingCart.getTotalPrice()).thenReturn(150.0);
+        when(shoppingCart.getTotalPrice()).thenReturn(100.0);
         Product[] products = {
                 new Product("P001", "Product A", 60.0),
                 new Product("P002", "Product B", 40.0)
